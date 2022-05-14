@@ -1,0 +1,43 @@
+' Gambas class file
+
+
+
+
+Public Sub Form_Open()
+Dim f1 As File
+f1 = Open "/tmp/mail" For Create 
+Close f1
+f1 = Open "/tmp/mail.out" For Create 
+Close f1
+f1.Save("/tmp/mail", "")
+f1.Save("/tmp/mail.out", "")
+  TextArea1.Text = ""
+
+End
+
+Public Sub Button1_Click()
+Dim f1 As File
+Dim a As String 
+Dim aa As String 
+Dim sss As String
+TextBox3.Text = ""
+f1 = Open "/tmp/mail" For Create 
+Close f1
+  sss = Replace(TextArea1.Text, "\n", ";")
+  sss = Replace(sss, "\r", ";")
+  f1.Save("/tmp/mail", sss & "\n")
+  Shell "netcat " & TextBox1.Text & " " & TextBox2.Text & " < /tmp/mail > /tmp/mail.out"
+  Sleep 1
+  f1 = Open "/tmp/mail.out" For Input
+  aa = ""
+  While 1
+    Line Input #f1, a
+    aa = aa & "\n" & a
+    If Eof(f1) Then Break
+  Wend
+  Close #f1
+  TextBox3.Text = Replace(aa, "\n", ";")
+  TextArea1.refresh()
+  
+End
+
